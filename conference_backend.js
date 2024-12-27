@@ -37,6 +37,7 @@ const initializeDatabase = async () => {
     ];
 
     const createTableQueries = [
+        `USE railway`,
         `CREATE TABLE IF NOT EXISTS Participants (
             participant_id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
