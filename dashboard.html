@@ -126,7 +126,7 @@
         // Load Schedule
         const loadSchedule = async () => {
             try {
-                const response = await fetch('http://localhost:3000/schedule');
+                const response = await fetch('https://internationalresearchconference-production.up.railway.app/schedule');
                 const data = await response.json();
                 const table = document.getElementById('scheduleTable');
 
@@ -147,7 +147,7 @@
         // Register for Session
         const registerForSession = async (sessionId) => {
             try {
-                const response = await fetch('http://localhost:3000/register-session', {
+                const response = await fetch('https://internationalresearchconference-production.up.railway.app/register-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ participant_id: 1, session_id: sessionId }),
@@ -167,7 +167,7 @@
         // Load Keynote Speakers
         const loadKeynoteSpeakers = async () => {
             try {
-                const response = await fetch('http://localhost:3000/keynote-speakers');
+                const response = await fetch('https://internationalresearchconference-production.up.railway.app/keynote-speakers');
                 const data = await response.json();
                 document.getElementById('keynoteSpeakers').innerHTML = data.map(speaker => `
                     <p><strong>${speaker.name}</strong><br>${speaker.topic}<br>${speaker.time}</p>
