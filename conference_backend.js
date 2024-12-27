@@ -20,10 +20,10 @@ app.use(bodyParser.json());
 
 // Database connection
 const pool = mysql.createPool({
-    host: 'localhost',      // Your MySQL host
-    user: 'root',           // MySQL username (default is 'root')
-    password: '',           // MySQL password (leave empty if none is set)
-    database: 'conference_db', // Your database name
+    host: process.env.DB_HOST,      // Your MySQL host
+    user: process.env.DB_USER,           // MySQL username (default is 'root')
+    password: process.env.DB_PASSWORD,           // MySQL password (leave empty if none is set)
+    database: process.env.DB_NAME, // Your database name
     port: 3306            // MySQL default port
 });
 
