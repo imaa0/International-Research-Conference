@@ -95,6 +95,8 @@ const initializeDatabase = async () => {
     }
 };
 
+initializeDatabase();
+
 // Email setup using Basic Authentication (Username and Password)
 const transporter = nodemailer.createTransport({
     host: 'smtp.mailersend.net', // MailerSend SMTP server
