@@ -19,6 +19,7 @@ app.use(cors({ origin: '*' })); // Enable CORS for all origins
 app.use(bodyParser.json());
 
 // Database connection
+console.log(process.env.DB_HOST)
 const pool = mysql.createPool({
     host: process.env.DB_HOST,      // Your MySQL host
     user: process.env.DB_USER,           // MySQL username (default is 'root')
