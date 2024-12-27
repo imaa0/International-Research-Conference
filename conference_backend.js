@@ -19,7 +19,7 @@ app.use(cors({ origin: '*' })); // Enable CORS for all origins
 app.use(bodyParser.json());
 
 // Database connection
-console.log(process.env.DB_HOST)
+
 const pool = mysql.createPool({
     host: process.env.DB_HOST,      // Your MySQL host
     user: process.env.DB_USER,           // MySQL username (default is 'root')
@@ -28,76 +28,6 @@ const pool = mysql.createPool({
     port: process.env.PORT            // MySQL default port
 });
 
-const initializeDatabase = async () => {
-    const dropTableQueries = [
-        `DROP TABLE IF EXISTS Proceedings`,
-        `DROP TABLE IF EXISTS Attendance`,
-        `DROP TABLE IF EXISTS Sessions`,
-        `DROP TABLE IF EXISTS Tracks`,
-        `DROP TABLE IF EXISTS Participants`,
-    ];
-
-    const createTableQueries = [
-        `USE railway`,
-        `CREATE TABLE IF NOT EXISTS Participants (
-            participant_id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            organization VARCHAR(255),
-            QR_code VARCHAR(255) UNIQUE NOT NULL,
-            sessions_registered JSON
-        )`,
-        `CREATE TABLE IF NOT EXISTS Tracks (
-            track_id INT AUTO_INCREMENT PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            description TEXT
-        )`,
-        `CREATE TABLE IF NOT EXISTS Sessions (
-            session_id INT AUTO_INCREMENT PRIMARY KEY,
-            track_id INT NOT NULL,
-            title VARCHAR(255) NOT NULL,
-            speaker VARCHAR(255) NOT NULL,
-            time DATETIME NOT NULL,
-            venue VARCHAR(255) NOT NULL,
-            capacity INT NOT NULL,
-            registered_count INT DEFAULT 0,
-            FOREIGN KEY (track_id) REFERENCES Tracks(track_id) ON DELETE CASCADE
-        )`,
-        `CREATE TABLE IF NOT EXISTS Attendance (
-            attendance_id INT AUTO_INCREMENT PRIMARY KEY,
-            participant_id INT NOT NULL,
-            session_id INT NOT NULL,
-            check_in_time DATETIME,
-            FOREIGN KEY (participant_id) REFERENCES Participants(participant_id) ON DELETE CASCADE,
-            FOREIGN KEY (session_id) REFERENCES Sessions(session_id) ON DELETE CASCADE
-        )`,
-        `CREATE TABLE IF NOT EXISTS Proceedings (
-            file_id INT AUTO_INCREMENT PRIMARY KEY,
-            file_name VARCHAR(255),
-            file_path VARCHAR(255)
-        )`,
-    ];
-
-    try {
-        // Drop tables
-        for (const query of dropTableQueries) {
-            await pool.query(query);
-        }
-
-        console.log('All tables dropped successfully.');
-
-        // Create tables
-        for (const query of createTableQueries) {
-            await pool.query(query);
-        }
-
-        console.log('All tables created successfully.');
-    } catch (error) {
-        console.error('Error initializing database:', error.message);
-    }
-};
-
-initializeDatabase();
 
 // Email setup using Basic Authentication (Username and Password)
 const transporter = nodemailer.createTransport({
