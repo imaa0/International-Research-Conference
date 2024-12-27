@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1e293b;
+            color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #334155;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #93c5fd;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #475569;
+            border-radius: 0.375rem;
+            background: #1e293b;
+            color: #f8fafc;
+            font-size: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        #emailGroup {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="userType">Login As:</label>
+                <select id="userType" name="userType" required>
+                    <option value="">Select</option>
+                    <option value="admin">Admin</option>
+                    <option value="participant">Participant</option>
+                </select>
+            </div>
+            <div id="emailGroup" class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </div>
+
+    <script>
+        const userType = document.getElementById('userType');
+        const emailGroup = document.getElementById('emailGroup');
+        const emailInput = document.getElementById('email');
+
+        userType.addEventListener('change', () => {
+            if (userType.value === 'participant') {
+                emailGroup.style.display = 'block';
+                emailInput.setAttribute('required', 'required');
+            } else {
+                emailGroup.style.display = 'none';
+                emailInput.removeAttribute('required');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const userTypeValue = userType.value;
+            const password = document.getElementById('password').value;
+            const email = emailInput.value;
+
+            if (userTypeValue === 'admin' && password === '12345') {
+                window.location.href = 'admindashboard.html'; // Redirect to admin dashboard
+            } else if (userTypeValue === 'participant') {
+                // Replace with your actual API call
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+                if (response.ok) {
+                    window.location.href = 'dashboard.html'; // Redirect to participant dashboard
+                } else {
+                    alert('Invalid credentials for participant');
+                }
+            } else {
+                alert('Invalid credentials');
+            }
+        });
+    </script>
+</body>
+</html>

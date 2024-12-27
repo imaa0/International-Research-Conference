@@ -1,0 +1,160 @@
+<!-- Updated index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Day Management System</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d5d7dc, #3b82f6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #3b82f6;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 600px;
+            position: relative;
+            margin-top: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(130, 141, 174, 0.9), rgba(59, 130, 246, 0.9));
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 1rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .buttons {
+            margin-top: 1.5rem;
+        }
+
+        .buttons .btn {
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="https://videos.pexels.com/video-files/13423369/13423369-uhd_2560_1440_24fps.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">International Research Conference 2024</h1>
+            <p class="hero-subtitle">Join the world's leading researchers and innovators</p>
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="window.location.href='registration.html';">Register Now</button>
+                <button class="btn btn-secondary" onclick="window.location.href='login.html';">Login</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add JavaScript for backend communication -->
+    <script>
+        // Function to check backend connectivity (Optional)
+        async function checkBackend() {
+            try {
+                const response = await fetch('http://localhost:3000/test-db');
+                const result = await response.json();
+                if (result.success) {
+                    console.log('Backend is connected:', result.result);
+                } else {
+                    console.error('Backend connection failed');
+                }
+            } catch (error) {
+                console.error('Error checking backend connection:', error);
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = checkBackend;
+    </script>
+</body>
+</html>

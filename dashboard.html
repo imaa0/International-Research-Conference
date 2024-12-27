@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Dashboard</title>
+    <style>
+        /* Basic Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #334155;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+            color: #93c5fd;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            background: #2563eb;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            border: 1px solid #475569;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: #475569;
+            color: #f1f5f9;
+        }
+
+        td {
+            background: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Conference Dashboard</h1>
+
+        <!-- Conference Schedule -->
+        <section class="schedule">
+            <h2>Conference Schedule</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Track</th>
+                        <th>Session</th>
+                        <th>Time</th>
+                        <th>Location</th>
+                        <th>Capacity</th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleTable">
+                    <!-- Dynamic rows will load here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Keynote Speakers & Presentation -->
+        <section class="keynotes">
+            <h2>Keynote Speakers</h2>
+            <p id="keynoteSpeakers">Loading Keynote Speakers...</p>
+        </section>
+
+        <!-- Register for Session -->
+        <section class="sessions">
+            <h2>Register for Sessions</h2>
+            <button class="btn" onclick="registerForSession(1)">Register for Session 1</button>
+            <button class="btn" onclick="registerForSession(2)">Register for Session 2</button>
+        </section>
+
+        <!-- Feedback Section -->
+        <section class="feedback">
+            <h2>Submit Feedback</h2>
+            <button class="btn" onclick="alert('Feedback functionality coming soon!')">Provide Feedback</button>
+        </section>
+
+        <!-- QR Check-in -->
+        <section class="checkin">
+            <h2>QR Check-In</h2>
+            <button class="btn" onclick="alert('QR Check-In functionality coming soon!')">Check-In</button>
+        </section>
+    </div>
+
+    <script>
+        // Load Schedule
+        const loadSchedule = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/schedule');
+                const data = await response.json();
+                const table = document.getElementById('scheduleTable');
+
+                table.innerHTML = data.map(session => `
+                    <tr>
+                        <td>${session.track}</td>
+                        <td>${session.session_name}</td>
+                        <td>${session.time}</td>
+                        <td>${session.location}</td>
+                        <td>${session.capacity}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading schedule:', error);
+            }
+        };
+
+        // Register for Session
+        const registerForSession = async (sessionId) => {
+            try {
+                const response = await fetch('http://localhost:3000/register-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participant_id: 1, session_id: sessionId }),
+                });
+
+                if (response.ok) {
+                    alert('Successfully registered for session!');
+                } else {
+                    throw new Error('Registration failed');
+                }
+            } catch (error) {
+                console.error('Error registering for session:', error);
+                alert('Error registering for session');
+            }
+        };
+
+        // Load Keynote Speakers
+        const loadKeynoteSpeakers = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/keynote-speakers');
+                const data = await response.json();
+                document.getElementById('keynoteSpeakers').innerHTML = data.map(speaker => `
+                    <p><strong>${speaker.name}</strong><br>${speaker.topic}<br>${speaker.time}</p>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading keynote speakers:', error);
+            }
+        };
+
+        loadSchedule();
+        loadKeynoteSpeakers();
+    </script>
+</body>
+</html>

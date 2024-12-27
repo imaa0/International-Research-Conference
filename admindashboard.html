@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1e293b;
+            color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .section {
+            background: #334155;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section h2 {
+            color: #93c5fd;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        table, th, td {
+            border: 1px solid #475569;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: #475569;
+            color: #f1f5f9;
+        }
+
+        td {
+            background: #1e293b;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        form input, form select {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            width: 100%;
+            border-radius: 0.25rem;
+            border: 1px solid #475569;
+        }
+
+        .loading {
+            text-align: center;
+            color: #93c5fd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+
+    <!-- Participant Management -->
+    <div class="section" id="participant-management">
+        <h2>Participant Management</h2>
+        <p class="loading" id="participantLoading">Loading participants...</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Participant ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>QR Code</th>
+                    <th>Sessions Registered</th>
+                </tr>
+            </thead>
+            <tbody id="participantTable">
+                <!-- Dynamic participant rows -->
+            </tbody>
+        </table>
+        <button class="btn" onclick="showParticipantForm()">Add Participant</button>
+
+        <!-- Add Participant Form -->
+        <form id="participantForm" style="display:none;" onsubmit="addParticipant(event)">
+            <h3>Add New Participant</h3>
+            <input type="text" id="participantName" placeholder="Name" required>
+            <input type="email" id="participantEmail" placeholder="Email" required>
+            <input type="file" id="participantQR" accept="image/*" required>
+            <button type="submit" class="btn">Add Participant</button>
+        </form>
+    </div>
+
+    <!-- Track and Session Management -->
+    <div class="section" id="track-management">
+        <h2>Track and Session Management</h2>
+        <p class="loading" id="sessionLoading">Loading sessions...</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Track ID</th>
+                    <th>Session ID</th>
+                    <th>Title</th>
+                    <th>Speaker</th>
+                    <th>Time</th>
+                    <th>Venue</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+            <tbody id="sessionTable">
+                <!-- Dynamic session rows -->
+            </tbody>
+        </table>
+        <button class="btn" onclick="showSessionForm()">Add Session</button>
+
+        <!-- Add Session Form -->
+        <form id="sessionForm" style="display:none;" onsubmit="addSession(event)">
+            <h3>Add New Session</h3>
+            <input type="text" id="sessionTitle" placeholder="Session Title" required>
+            <input type="text" id="sessionSpeaker" placeholder="Speaker" required>
+            <input type="datetime-local" id="sessionTime" required>
+            <input type="text" id="sessionVenue" placeholder="Venue" required>
+            <input type="number" id="sessionCapacity" placeholder="Capacity" required>
+            <button type="submit" class="btn">Add Session</button>
+        </form>
+    </div>
+
+    <!-- Attendance Management -->
+    <div class="section" id="attendance-management">
+        <h2>Attendance Management</h2>
+        <p class="loading" id="attendanceLoading">Loading attendance...</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Attendance ID</th>
+                    <th>Participant ID</th>
+                    <th>Session ID</th>
+                    <th>Check-In Time</th>
+                </tr>
+            </thead>
+            <tbody id="attendanceTable">
+                <!-- Dynamic attendance rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:3000';
+
+        // Fetch data for participants, sessions, and attendance
+        const fetchData = async (endpoint, tableId, loadingId) => {
+            try {
+                const response = await fetch(`${apiUrl}/${endpoint}`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                document.getElementById(loadingId).style.display = 'none';
+                const table = document.getElementById(tableId);
+                table.innerHTML = data.map(item => `
+                    <tr>
+                        ${Object.values(item).map(value => `<td>${value}</td>`).join('')}
+                    </tr>
+                `).join('');
+            } catch (error) {
+                document.getElementById(loadingId).textContent = 'Error loading data.';
+                console.error(error);
+            }
+        };
+
+        // Add Participant function
+        const addParticipant = async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('participantName').value;
+            const email = document.getElementById('participantEmail').value;
+            const qrCode = document.getElementById('participantQR').files[0];
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('qr_code', qrCode);
+
+            try {
+                const response = await fetch(`${apiUrl}/participants`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (response.ok) {
+                    alert('Participant added successfully');
+                    fetchData('participants', 'participantTable', 'participantLoading');
+                } else {
+                    throw new Error('Failed to add participant');
+                }
+            } catch (error) {
+                alert('Error adding participant');
+                console.error(error);
+            }
+        };
+
+        // Add Session function
+        const addSession = async (event) => {
+            event.preventDefault();
+            const title = document.getElementById('sessionTitle').value;
+            const speaker = document.getElementById('sessionSpeaker').value;
+            const time = document.getElementById('sessionTime').value;
+            const venue = document.getElementById('sessionVenue').value;
+            const capacity = document.getElementById('sessionCapacity').value;
+
+            const sessionData = {
+                title,
+                speaker,
+                time,
+                venue,
+                capacity,
+            };
+
+            try {
+                const response = await fetch(`${apiUrl}/sessions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sessionData),
+                });
+                if (response.ok) {
+                    alert('Session added successfully');
+                    fetchData('sessions', 'sessionTable', 'sessionLoading');
+                } else {
+                    throw new Error('Failed to add session');
+                }
+            } catch (error) {
+                alert('Error adding session');
+                console.error(error);
+            }
+        };
+
+        const showParticipantForm = () => {
+            document.getElementById('participantForm').style.display = 'block';
+        };
+
+        const showSessionForm = () => {
+            document.getElementById('sessionForm').style.display = 'block';
+        };
+
+        // Load the data when the page is ready
+        fetchData('participants', 'participantTable', 'participantLoading');
+        fetchData('sessions', 'sessionTable', 'sessionLoading');
+        fetchData('attendance', 'attendanceTable', 'attendanceLoading');
+    </script>
+</body>
+</html>
