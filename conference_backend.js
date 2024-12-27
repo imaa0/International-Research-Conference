@@ -24,7 +24,7 @@ const pool = mysql.createPool({
     user: process.env.DB_USER,           // MySQL username (default is 'root')
     password: process.env.DB_PASSWORD,           // MySQL password (leave empty if none is set)
     database: process.env.DB_NAME, // Your database name
-    port: 3306            // MySQL default port
+    port: process.env.PORT            // MySQL default port
 });
 
 // Email setup using Basic Authentication (Username and Password)
